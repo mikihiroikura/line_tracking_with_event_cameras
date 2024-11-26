@@ -175,8 +175,16 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
         float distorted_endpoint_y = map_y_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
         distorted_endpoints.emplace_back(static_cast<int>(distorted_endpoint_x), static_cast<int>(distorted_endpoint_y));
       }
+      // Draw distorted line segments
       for (int i = 0; i < distorted_endpoints.size() - 1; i++) {
-        cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, 1, cv::LINE_8, 0);
+        // Check FoV
+        bool isInImage_0 = (distorted_endpoints[i].x > 0 && distorted_endpoints[i].x < image_.cols - 1 && distorted_endpoints[i].y > 0 && distorted_endpoints[i].y < image_.rows - 1);
+        bool isInImage_1 = (distorted_endpoints[i+1].x > 0 && distorted_endpoints[i+1].x < image_.cols - 1 && distorted_endpoints[i+1].y > 0 && distorted_endpoints[i+1].y < image_.rows - 1);
+        cv::Vec2i ls = distorted_endpoints[i+1] - distorted_endpoints[i];
+        bool smallNorm = (cv::norm(ls) < 100);
+        if (isInImage_0 && isInImage_1 && smallNorm) {
+          cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, 1, cv::LINE_8, 0);
+        }
       }
 
       if ((msg->header.stamp.toSec() - lines_.header.stamp.toSec()) * 1000 > 1000.0 / 10) {
