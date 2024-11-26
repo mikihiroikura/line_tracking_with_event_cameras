@@ -18,6 +18,7 @@
     <remap from="vel_cmd" to="/parrot/agiros_pilot/velocity_command" />
     <remap from="image" to="/dvs/image_raw" />
     <remap from="line_visualization" to="line_visualization" />
+    <remap from="line_visualization_distort" to="line_visualization_distort" />
   </node>
 
   <!-- display -->

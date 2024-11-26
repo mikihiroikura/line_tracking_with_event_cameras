@@ -54,6 +54,7 @@ private:
   ros::Subscriber vel_cmd_sub_;
   image_transport::Subscriber image_sub_;
   image_transport::Publisher image_pub_;
+  image_transport::Publisher image_distort_pub_;
 
   std::mutex lines_mutex_;
   std::mutex vel_cmd_mutex_;
@@ -65,7 +66,7 @@ private:
   cv::Mat map_y_;
   std::vector<double> resolution_;
 
-  cv::Mat image_;
+  cv::Mat image_, image_undistort_;
   bool store_images_;
   bool show_all_lines_;
   bool show_reference_lines_;
