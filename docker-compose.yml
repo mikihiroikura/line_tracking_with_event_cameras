@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  plt:
+    build:
+        context: .
+        dockerfile: ./Dockerfile
+    image: plt:latest
+    privileged: true
+    network_mode: host
+    container_name: plt
+    environment:
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - .:/home/plt/catkin_ws/src/line_tracking_with_event_cameras
+      - /home/mikura-iit.local/data/rosbag/:/app/rosbag # Mount rosbag files into docker container
+    command: sleep infinity
