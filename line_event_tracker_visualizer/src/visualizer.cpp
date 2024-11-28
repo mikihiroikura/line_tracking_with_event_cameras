@@ -171,19 +171,23 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
       std::vector<cv::Point> distorted_endpoints;
       for (double dp = 0; dp <= 1.05; dp+=0.05) {
         segmented_endpoint = end_point_1 * (1 -dp) + end_point_2 * dp;
-        float distorted_endpoint_x = map_x_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
-        float distorted_endpoint_y = map_y_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
-        distorted_endpoints.emplace_back(static_cast<int>(distorted_endpoint_x), static_cast<int>(distorted_endpoint_y));
+        if (segmented_endpoint.x > 0 && segmented_endpoint.x < image_undistort_.cols - 1 && segmented_endpoint.y > 0 && segmented_endpoint.y < image_undistort_.rows - 1) {
+          float distorted_endpoint_x = map_x_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
+          float distorted_endpoint_y = map_y_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
+          distorted_endpoints.emplace_back(static_cast<int>(distorted_endpoint_x), static_cast<int>(distorted_endpoint_y));
+        }
       }
       // Draw distorted line segments
-      for (int i = 0; i < distorted_endpoints.size() - 1; i++) {
-        // Check FoV
-        bool isInImage_0 = (distorted_endpoints[i].x > 0 && distorted_endpoints[i].x < image_.cols - 1 && distorted_endpoints[i].y > 0 && distorted_endpoints[i].y < image_.rows - 1);
-        bool isInImage_1 = (distorted_endpoints[i+1].x > 0 && distorted_endpoints[i+1].x < image_.cols - 1 && distorted_endpoints[i+1].y > 0 && distorted_endpoints[i+1].y < image_.rows - 1);
-        cv::Vec2i ls = distorted_endpoints[i+1] - distorted_endpoints[i];
-        bool smallNorm = (cv::norm(ls) < 100);
-        if (isInImage_0 && isInImage_1 && smallNorm) {
-          cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, 1, cv::LINE_8, 0);
+      if (distorted_endpoints.size()) {
+        for (int i = 0; i < distorted_endpoints.size() - 1; i++) {
+          // Check FoV
+          bool isInImage_0 = (distorted_endpoints[i].x > 0 && distorted_endpoints[i].x < image_.cols - 1 && distorted_endpoints[i].y > 0 && distorted_endpoints[i].y < image_.rows - 1);
+          bool isInImage_1 = (distorted_endpoints[i+1].x > 0 && distorted_endpoints[i+1].x < image_.cols - 1 && distorted_endpoints[i+1].y > 0 && distorted_endpoints[i+1].y < image_.rows - 1);
+          cv::Vec2i ls = distorted_endpoints[i+1] - distorted_endpoints[i];
+          bool smallNorm = (cv::norm(ls) < 100);
+          if (isInImage_0 && isInImage_1 && smallNorm) {
+            cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, 1, cv::LINE_8, 0);
+          }
         }
       }
 
