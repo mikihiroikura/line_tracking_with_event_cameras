@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y python-catkin-tools
 ### Install Power line tracker with event camera
 RUN cd ${CODE_DIR}/catkin_ws/src && \
     git clone https://github.com/mikihiroikura/line_tracking_with_event_cameras.git && \
-    git clone https://github.com/uzh-rpg/rpg_dvs_ros.git
+    git clone https://github.com/uzh-rpg/rpg_dvs_ros.git && \
+    git clone https://github.com/catkin/catkin_simple.git
 
 ### 
 RUN chown -R $UNAME:$UNAME ${CODE_DIR}/catkin_ws

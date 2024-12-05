@@ -42,6 +42,10 @@ catkin build line_event_tracker
 ```
 catkin build line_event_tracker_visualizer
 ```
+6. If you want to visualize event rosbag data, build the `dvs_renderer` as well:
+```
+catkin build dvs_renderer
+```
 
 ## Parameter Tuning
 The parameters and their description can be found [here](https://github.com/uzh-rpg/line_tracking_using_event_cameras/blob/main/line_event_tracker/param/param.yaml).

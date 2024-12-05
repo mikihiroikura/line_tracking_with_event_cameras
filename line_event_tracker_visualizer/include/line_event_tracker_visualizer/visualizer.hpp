@@ -72,8 +72,10 @@ private:
   bool show_reference_lines_;
   bool show_only_vertical_lines_;
   bool show_vel_cmd_;
+  bool show_distorted_line_;
   bool undistort_;
   bool use_dvs_image_;
+  bool draw_on_dvs_image_;
   std::string images_dir_;
   int image_counter_;
 
