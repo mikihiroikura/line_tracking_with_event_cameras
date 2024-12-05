@@ -21,6 +21,14 @@
     <remap from="line_visualization_distort" to="line_visualization_distort" />
   </node>
 
+  <!-- dvs_renderer -->
+  <node name="dvs_renderer" pkg="dvs_renderer" type="dvs_renderer" output="screen">
+    <param name="display_method" value="red-blue"/>
+    <remap from="events" to="/dvs/events" />
+    <remap from="image" to="/dvs/image_raw" />
+    <remap from="dvs_rendering" to="dvs_rendering" />
+  </node>
+
   <!-- display -->
   <node name="image_view_left" pkg="rqt_image_view" type="rqt_image_view">
   	<remap from="image" to="line_visualization"/>
