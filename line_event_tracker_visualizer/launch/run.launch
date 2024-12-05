@@ -10,13 +10,16 @@
     <param name="show_reference_lines" type="bool" value="false" />
     <param name="show_only_vertical_lines" type="bool" value="false" />
     <param name="show_vel_cmd" type="bool" value="false" />
+    <param name="show_distorted_line" type="bool" value="true" />
     <param name="images_dir" type="string" value="" />
     <param name="undistort" type="bool" value="true" />
     <param name="use_dvs_image" type="bool" value="true" />
+    <param name="draw_on_dvs_image" type="bool" value="true" />
 
     <remap from="lines" to="/line_events_tracker_lines" />
     <remap from="vel_cmd" to="/parrot/agiros_pilot/velocity_command" />
     <remap from="image" to="/dvs/image_raw" />
+    <remap from="dvs_image" to="dvs_rendering" />
     <remap from="line_visualization" to="line_visualization" />
     <remap from="line_visualization_distort" to="line_visualization_distort" />
   </node>

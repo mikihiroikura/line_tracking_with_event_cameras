@@ -17,8 +17,10 @@ Visualizer::Visualizer(ros::NodeHandle & nh) : nh_(nh)
   nh_.param<bool>("/line_visualizer/show_reference_lines", show_reference_lines_, true);
   nh_.param<bool>("/line_visualizer/show_only_vertical_lines", show_only_vertical_lines_, true);
   nh_.param<bool>("/line_visualizer/show_vel_cmd", show_vel_cmd_, true);
+  nh_.param<bool>("/line_visualizer/show_distorted_line", show_distorted_line_, true);
   nh_.param<bool>("/line_visualizer/undistort", undistort_, false);
   nh_.param<bool>("/line_visualizer/use_dvs_image", use_dvs_image_, false);
+  nh_.param<bool>("/line_visualizer/draw_on_dvs_image", draw_on_dvs_image_, false);
 
   readCameraInfo();
 
@@ -26,15 +28,21 @@ Visualizer::Visualizer(ros::NodeHandle & nh) : nh_(nh)
   vel_cmd_sub_ = nh_.subscribe("vel_cmd", 1, &Visualizer::velocityCommandCallback, this);
 
   image_transport::ImageTransport it_(nh_);
-  image_sub_ = it_.subscribe("image", 1, &Visualizer::imageCallback, this);
+  // if (draw_on_dvs_image_) {
+  //   image_sub_ = it_.subscribe("dvs_image", 1, &Visualizer::imageCallback, this);
+  // }
+  // else {
+  //   image_sub_ = it_.subscribe("image", 1, &Visualizer::imageCallback, this);
+  // }
+  image_sub_ = it_.subscribe("dvs_image", 1, &Visualizer::imageCallback, this);
   image_pub_ = it_.advertise("line_visualization", 1);
-  image_distort_pub_ = it_.advertise("line_visualization_distort", 1);
+  if (show_distorted_line_) image_distort_pub_ = it_.advertise("line_visualization_distort", 1);
 }
 
 Visualizer::~Visualizer()
 {
   image_pub_.shutdown();
-  image_distort_pub_.shutdown();
+  if (show_distorted_line_) image_distort_pub_.shutdown();
 }
 
 void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
@@ -57,10 +65,18 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
   {
     cv::cvtColor(cv_ptr->image, image_, CV_RGB2BGR);
   }
-
-  if (msg->encoding == "mono8")
+  else if (msg->encoding == "mono8")
   {
     cv::cvtColor(cv_ptr->image, image_, CV_GRAY2BGR);
+  }
+  else if (msg->encoding == "bgr8")
+  {
+    cv_ptr->image.copyTo(image_);
+  }
+  else
+  {
+    ROS_ERROR("msg encoding error...");
+    return;
   }
 
   // undistort
@@ -135,14 +151,14 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
             text_color = cv::Scalar(51, 153, 255); // orange
             break;
           case line_event_tracker_msgs::Line::ACTIVE:
-            line_color = cv::Scalar(0, 0, 255); // red
-            text_color = cv::Scalar(0, 0, 255); // red
+            line_color = cv::Scalar(0, 190, 110); // green
+            text_color = cv::Scalar(0, 190, 110); // green
             break;
         }
       } else {
         if (line.state == line_event_tracker_msgs::Line::INITIALIZING) continue;
-        line_color = cv::Scalar(0, 0, 255);
-        text_color = cv::Scalar(0, 0, 255);
+        line_color = cv::Scalar(0, 190, 110);
+        text_color = cv::Scalar(0, 190, 110);
 
       }
 
@@ -166,27 +182,29 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
       cv::putText(image_undistort_, std::to_string(line.id), mid_point, cv::FONT_HERSHEY_DUPLEX, 0.45, text_color, 0.5,
                   cv::LINE_AA);
 
-      // Create distorted line segments
-      cv::Point2d segmented_endpoint;
-      std::vector<cv::Point> distorted_endpoints;
-      for (double dp = 0; dp <= 1.05; dp+=0.05) {
-        segmented_endpoint = end_point_1 * (1 -dp) + end_point_2 * dp;
-        if (segmented_endpoint.x > 0 && segmented_endpoint.x < image_undistort_.cols - 1 && segmented_endpoint.y > 0 && segmented_endpoint.y < image_undistort_.rows - 1) {
-          float distorted_endpoint_x = map_x_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
-          float distorted_endpoint_y = map_y_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
-          distorted_endpoints.emplace_back(static_cast<int>(distorted_endpoint_x), static_cast<int>(distorted_endpoint_y));
+      if (show_distorted_line_) {
+        // Create distorted line segments
+        cv::Point2d segmented_endpoint;
+        std::vector<cv::Point> distorted_endpoints;
+        for (double dp = 0; dp <= 1.05; dp+=0.05) {
+          segmented_endpoint = end_point_1 * (1 -dp) + end_point_2 * dp;
+          if (segmented_endpoint.x > 0 && segmented_endpoint.x < image_undistort_.cols - 1 && segmented_endpoint.y > 0 && segmented_endpoint.y < image_undistort_.rows - 1) {
+            float distorted_endpoint_x = map_x_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
+            float distorted_endpoint_y = map_y_.at<float>(segmented_endpoint.y, segmented_endpoint.x);
+            distorted_endpoints.emplace_back(static_cast<int>(distorted_endpoint_x), static_cast<int>(distorted_endpoint_y));
+          }
         }
-      }
-      // Draw distorted line segments
-      if (distorted_endpoints.size()) {
-        for (int i = 0; i < distorted_endpoints.size() - 1; i++) {
-          // Check FoV
-          bool isInImage_0 = (distorted_endpoints[i].x > 0 && distorted_endpoints[i].x < image_.cols - 1 && distorted_endpoints[i].y > 0 && distorted_endpoints[i].y < image_.rows - 1);
-          bool isInImage_1 = (distorted_endpoints[i+1].x > 0 && distorted_endpoints[i+1].x < image_.cols - 1 && distorted_endpoints[i+1].y > 0 && distorted_endpoints[i+1].y < image_.rows - 1);
-          cv::Vec2i ls = distorted_endpoints[i+1] - distorted_endpoints[i];
-          bool smallNorm = (cv::norm(ls) < 100);
-          if (isInImage_0 && isInImage_1 && smallNorm) {
-            cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, 1, cv::LINE_8, 0);
+        // Draw distorted line segments
+        if (distorted_endpoints.size()) {
+          for (int i = 0; i < distorted_endpoints.size() - 1; i++) {
+            // Check FoV
+            bool isInImage_0 = (distorted_endpoints[i].x > 0 && distorted_endpoints[i].x < image_.cols - 1 && distorted_endpoints[i].y > 0 && distorted_endpoints[i].y < image_.rows - 1);
+            bool isInImage_1 = (distorted_endpoints[i+1].x > 0 && distorted_endpoints[i+1].x < image_.cols - 1 && distorted_endpoints[i+1].y > 0 && distorted_endpoints[i+1].y < image_.rows - 1);
+            cv::Vec2i ls = distorted_endpoints[i+1] - distorted_endpoints[i];
+            bool smallNorm = (cv::norm(ls) < 100);
+            if (isInImage_0 && isInImage_1 && smallNorm) {
+              cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, 1, cv::LINE_8, 0);
+            }
           }
         }
       }
@@ -217,10 +235,12 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
     image_undistort_.copyTo(cv_image.image);
     image_pub_.publish(cv_image.toImageMsg());
 
-    cv_bridge::CvImage cv_image_distort;
-    cv_image_distort.encoding = "bgr8";
-    image_.copyTo(cv_image_distort.image);
-    image_distort_pub_.publish(cv_image_distort.toImageMsg());
+    if (show_distorted_line_) {
+      cv_bridge::CvImage cv_image_distort;
+      cv_image_distort.encoding = "bgr8";
+      image_.copyTo(cv_image_distort.image);
+      image_distort_pub_.publish(cv_image_distort.toImageMsg());
+    }
 
     if (store_images_) {
       std::string image_path = images_dir_ + std::to_string(image_counter_) + ".png";
