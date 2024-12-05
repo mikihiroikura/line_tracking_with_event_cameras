@@ -28,13 +28,12 @@ Visualizer::Visualizer(ros::NodeHandle & nh) : nh_(nh)
   vel_cmd_sub_ = nh_.subscribe("vel_cmd", 1, &Visualizer::velocityCommandCallback, this);
 
   image_transport::ImageTransport it_(nh_);
-  // if (draw_on_dvs_image_) {
-  //   image_sub_ = it_.subscribe("dvs_image", 1, &Visualizer::imageCallback, this);
-  // }
-  // else {
-  //   image_sub_ = it_.subscribe("image", 1, &Visualizer::imageCallback, this);
-  // }
-  image_sub_ = it_.subscribe("dvs_image", 1, &Visualizer::imageCallback, this);
+  if (draw_on_dvs_image_) {
+    image_sub_ = it_.subscribe("dvs_image", 1, &Visualizer::imageCallback, this);
+  }
+  else {
+    image_sub_ = it_.subscribe("image", 1, &Visualizer::imageCallback, this);
+  }
   image_pub_ = it_.advertise("line_visualization", 1);
   if (show_distorted_line_) image_distort_pub_ = it_.advertise("line_visualization_distort", 1);
 }
