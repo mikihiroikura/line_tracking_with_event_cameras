@@ -74,6 +74,8 @@ void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
 
     events_received_ = true;
 
+    if (msg->events.size() < 1) return;
+
     cv::Mat events_distorted(msg->events.size(), 1, CV_32FC2);
     for (int i = 0; i < msg->events.size(); ++i)
     {

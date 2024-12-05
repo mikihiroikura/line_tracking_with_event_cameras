@@ -3,7 +3,7 @@
   <node name="line_visualizer" pkg="line_event_tracker_visualizer" type="line_event_tracker_visualizer_node" output="screen">
 
     <!-- Camera parameters -->
-    <rosparam file="$(find line_event_tracker)/param/davis_flying_room_rope_ir_equi.yaml" />
+    <rosparam file="$(find line_event_tracker)/param/gen3_iit.yaml" />
 
     <param name="store_images" type="bool" value="false" />
     <param name="show_all_lines" type="bool" value="true" />
