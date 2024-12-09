@@ -9,6 +9,11 @@ ARG GID=1000
 RUN groupadd -g $GID -o $UNAME
 RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
 
+# Add User into sudoers, can run sudo command without password
+RUN apt update && apt install -y sudo
+RUN usermod -aG sudo ${UNAME}
+RUN echo "${UNAME} ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/${UNAME}
+
 ARG CODE_DIR=/home/${UNAME}
 
 ### ROS setup ###
