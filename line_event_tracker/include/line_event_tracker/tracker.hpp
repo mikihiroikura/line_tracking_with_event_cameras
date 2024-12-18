@@ -232,6 +232,7 @@ private:
   long unique_cluster_id_;
 
   std::atomic<double> curr_time_;
+  double init_time_;
 
   std::chrono::steady_clock::time_point start_time_point_;
   bool events_received_ = false;

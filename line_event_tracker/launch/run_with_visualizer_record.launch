@@ -1,13 +1,11 @@
 <launch>
     <!-- rosbag file -->
-    <arg name="bag_file" default="/app/rosbag/three_lines.bag" />
+    <arg name="bag_file" default="/app/rosbag/Log2bag/three_lines.bag" />
+    <arg name="play_speed" default="0.5" />
     <!-- Recorded topic -->
     <arg name="topics" default="/line_events_tracker_lines" />
-    <!-- output file -->
-    <arg name="output_file" default="/app/rosbag/lines.bag" />
 
     <include file="$(find line_event_tracker)/launch/run.launch" />
     <include file="$(find line_event_tracker_visualizer)/launch/run.launch" />
-    <node name="rosbag_play" pkg="rosbag" type="play" args="$(arg bag_file)" output="screen" required="true" />
-    <node name="rosbag_record" pkg="rosbag" type="record" args="-O $(arg output_file) $(arg topics)" output="screen" respawn="false" />
+    <node name="rosbag_play" pkg="rosbag" type="play" args="-r $(arg play_speed) $(arg bag_file)" output="screen" required="true" />
 </launch>

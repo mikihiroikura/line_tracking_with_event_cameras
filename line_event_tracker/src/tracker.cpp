@@ -23,7 +23,9 @@ Tracker::Tracker(ros::NodeHandle &nh, ros::NodeHandle &pnh): nh_(nh), pnh_(pnh),
   options_.line_options_ = readLineOptions(pnh_);
   options_.cluster_options_ = readClusterOptions(pnh_);
   readCameraInfo(pnh_, K_, D_, distortion_model_);
-  debug_dir_ = "/path_to_debug_directory/";
+  debug_dir_ = "/home/plt/";
+
+  init_time_ = 0;
 
   // mask bounds
   mask_x_lower_ = double(options_.width_) / 2 - options_.mask_width_ / 2;
@@ -36,7 +38,7 @@ Tracker::Tracker(ros::NodeHandle &nh, ros::NodeHandle &pnh): nh_(nh), pnh_(pnh),
 
   event_subscriber_ = nh_.subscribe("events", 0, &Tracker::eventsCallback, this);
 
-  line_publisher_ = nh_.advertise<line_event_tracker_msgs::Lines>("/line_events_tracker_lines", 5);
+  line_publisher_ = nh_.advertise<line_event_tracker_msgs::Lines>("/line_events_tracker_lines", 1);
 
   // testing
   event_publisher_ = nh_.advertise<dvs_msgs::EventArray>("/test_events", 10);
@@ -64,6 +66,9 @@ Tracker::~Tracker()
 
 void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
 {
+  if (init_time_ == 0 && msg->events.size() >= 1) {
+    init_time_ = msg->events[0].ts.toSec() * 1000;
+  }
 
   if (options_.undistort_)
   {
@@ -939,7 +944,7 @@ void Tracker::writeLines(double t)
   for (auto const & l : lines_)
   {
     auto & line = l.second;
-    lines.append(std::to_string(write_counter_) + " " + std::to_string(t) + " " + std::to_string(line.getState()) + " " +
+    lines.append(std::to_string(write_counter_) + " " + std::to_string(t - init_time_) + " " + std::to_string(line.getState()) + " " +
     std::to_string(line.getNormal()(0)) + " " + std::to_string(line.getNormal()(1)) + " " + std::to_string(line.getNormal()(2)) + " " +
     std::to_string(line.getCOG()(0)) + " " + std::to_string(line.getCOG()(1)) + " " + std::to_string(line.getCOG()(2)) + " " +
     std::to_string((line.getMidPoint()(0))) + " " + std::to_string((line.getMidPoint()(1))) + " " + std::to_string((line.getLength())) + " " +
