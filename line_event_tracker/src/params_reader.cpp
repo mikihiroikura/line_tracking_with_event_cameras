@@ -61,6 +61,7 @@ LineOptions readLineOptions(const ros::NodeHandle &nh)
   nh.param<double>("lines/deletion_t_hibernate_no_events", options.del_t_hib_no_events_, 70);
   nh.param<int>("lines/deletion_out_of_frame_band", options.del_out_of_frame_band_, 10);
   nh.param<double>("lines/deletion_min_length", options.del_min_length_, 25);
+  nh.param<int>("lines/max_number_lines", options.max_num_lines_, 20);
 
   return options;
 }

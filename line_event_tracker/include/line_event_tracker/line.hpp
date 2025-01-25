@@ -34,6 +34,7 @@ struct LineOptions
   double del_t_hib_no_events_;
   int del_out_of_frame_band_;
   double del_min_length_;
+  int max_num_lines_;
 };
 
 enum LineState

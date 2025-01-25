@@ -535,7 +535,7 @@ inline bool Tracker::tryPromotingCluster(long cluster_id, double t)
     double length = sqrt(12 * std_dev_line);
 
     if (eig_vals[0] < options_.line_options_.prom_threshold_ &&
-        length > options_.line_options_.del_min_length_)
+        length > options_.line_options_.del_min_length_ && lines_.size() < options_.line_options_.max_num_lines_)
     {
 
       lines_.insert(lines_.end(), std::make_pair(unique_line_id_, Line(cluster.getEvents(), normal, eig_vals, eig_vecs, cog, length, options_.line_options_, t, -1)));
