@@ -4,7 +4,7 @@ general:
   undistort: true
   line_publish_rate: 40
   periodical_check_frequency: 50   # []
-  write_for_visualization: false    # [] store events belonging to lines and clusters for visualization purposes
+  write_for_visualization: true    # [] store events belonging to lines and clusters for visualization purposes
 
 hw_test:
   mask_height: 480                  # [px]
@@ -18,6 +18,8 @@ filters:
   nf_max_age: 70                     # [ms] maximum age of event in neighbourhood
 
 lines:
+  max_number_lines: 10
+
   # promotion
   promotion_threshold: 1.2          # [px]
   promotion_num_events: 45
