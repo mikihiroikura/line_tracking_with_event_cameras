@@ -14,7 +14,7 @@ filters:
   nf_max_age: 70                    # [ms] maximum age of event in neighbourhood
 
 lines:
-  max_number_lines: 10
+  max_number_lines: 15
 
   # promotion
   promotion_threshold: 1.2          # [px] value of smallest eigen value for line promotion
