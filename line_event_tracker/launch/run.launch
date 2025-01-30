@@ -1,10 +1,10 @@
 <launch>
     <node name="line_event_tracker" pkg="line_event_tracker" type="line_event_tracker_node" output="screen">
         <!-- Tracker parameters -->
-        <rosparam file="$(find line_event_tracker)/param/shapes.yaml" />
+        <rosparam file="$(find line_event_tracker)/param/three_lines_iit.yaml" />
 
         <!-- Camera parameters -->
-        <rosparam file="$(find line_event_tracker)/param/shapes_urban_davis240c.yaml" />
+        <rosparam file="$(find line_event_tracker)/param/gen3_iit.yaml" />
 
         <remap from="events" to="/dvs/events" />
         <remap from="lines" to="/line_events_tracker_lines" />

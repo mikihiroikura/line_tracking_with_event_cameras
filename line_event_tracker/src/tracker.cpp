@@ -136,11 +136,26 @@ void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
 
 void Tracker::processEvents()
 {
+  std::ofstream process_time_file;
+  if (options_.record_processing_time_) {
+      process_time_file.open(debug_dir_ + "processing_time.txt", std::ofstream::trunc);
+  }
+  unsigned int num_events = 0;
+  double total_processs_time = 0;
+  double init_event_timestamp_sec = 0;
+  bool isInitialized = false;
+  double actual_time_sec = 0;
+  double output_freq = 30;
+  double record_actual_time = 1.0/output_freq;
   Event ev;
   while(ros::ok())
   {
     waitForEvent(ev);
-
+    if (options_.record_processing_time_ && !isInitialized) {
+      init_event_timestamp_sec = ev.t / 1000;
+      isInitialized = true;
+    }
+    ros::Time tic = ros::Time::now();
     if (!filterEvent(ev))
     {
       continue;
@@ -160,6 +175,23 @@ void Tracker::processEvents()
     {
       continue;
     }
+    if (options_.record_processing_time_) {
+      ros::Time toc = ros::Time::now();
+      ros::Duration processing_time = toc - tic;
+      total_processs_time += processing_time.toSec();
+      num_events++;
+      actual_time_sec = ev.t / 1000 - init_event_timestamp_sec;
+      if (record_actual_time < actual_time_sec) {
+        process_time_file << actual_time_sec << "," << num_events << "," << total_processs_time << "\n";
+        process_time_file.flush();
+        record_actual_time += 1.0/output_freq;
+        num_events = 0;
+        total_processs_time = 0;
+      }
+    }
+  }
+  if (options_.record_processing_time_) {
+    process_time_file.close();
   }
 }
 

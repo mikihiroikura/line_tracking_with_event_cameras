@@ -12,6 +12,7 @@ TrackerOptions readTrackerOptions(const ros::NodeHandle &nh)
   nh.param<int>("general/line_publish_rate", options.line_publish_rate_, 30);
   nh.param<double>("general/periodical_check_frequency", options.periodical_check_frequency_, 100);
   nh.param<bool>("general/write_for_visualization", options.write_for_visualization_, false);
+  nh.param<bool>("general/record_processing_time", options.record_processing_time_, false);
 
   nh.param<double>("hw_test/mask_height", options.mask_height_, 260);
   nh.param<double>("hw_test/mask_width", options.mask_width_,  346);
