@@ -29,6 +29,7 @@ struct TrackerOptions
   int width_;
   bool undistort_;
   bool write_for_visualization_;
+  bool record_processing_time_;
   int line_publish_rate_;
   double periodical_check_frequency_;
 

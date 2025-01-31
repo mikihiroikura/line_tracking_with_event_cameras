@@ -5,6 +5,7 @@ general:
   line_publish_rate: 40             # [hz]
   periodical_check_frequency: 50    # [hz]
   write_for_visualization: true    # [] store events belonging to lines and clusters for visualization purposes
+  record_processing_time: false     # [] flag to record processing time
 
 filters:
   rf_period_same_pol: 8             # [ms] refactory period for events of same polarity
