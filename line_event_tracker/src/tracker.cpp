@@ -25,7 +25,13 @@ Tracker::Tracker(ros::NodeHandle &nh, ros::NodeHandle &pnh): nh_(nh), pnh_(pnh),
   readCameraInfo(pnh_, K_, D_, distortion_model_);
   debug_dir_ = "/home/plt/";
 
-  init_time_ = 0;
+  if (pnh_.getParam("bag_start_time", init_time_)) {
+      ROS_INFO("Bag Start Time [s]: %f", init_time_);
+      init_time_ = init_time_ * 1000; // Change unit from sec to msec
+  } else {
+      ROS_WARN("Failed to get parameter: bag_start_time. Using default.");
+      init_time_ = 0.0;
+  }
 
   // mask bounds
   mask_x_lower_ = double(options_.width_) / 2 - options_.mask_width_ / 2;
@@ -66,10 +72,6 @@ Tracker::~Tracker()
 
 void Tracker::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg)
 {
-  if (init_time_ == 0 && msg->events.size() >= 1) {
-    init_time_ = msg->events[0].ts.toSec() * 1000;
-  }
-
   if (options_.undistort_)
   {
     if (!events_received_)
@@ -266,14 +268,14 @@ void Tracker::publishLines()
       {
         std::unique_lock<std::mutex> lock_lines(lines_mutex_);
         writeLines(t);
-        writeLineEvents();
+        // writeLineEvents();
       }
 
-      {
-        std::unique_lock<std::mutex> lock_clusters(clusters_mutex_);
-        writeClusters(t);
-        writeClusterEvents();
-      }
+      // {
+      //   std::unique_lock<std::mutex> lock_clusters(clusters_mutex_);
+      //   writeClusters(t);
+      //   writeClusterEvents();
+      // }
 
       ++write_counter_;
     }
