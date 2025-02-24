@@ -13,6 +13,9 @@
         <arg name="tracker_param_file" value="$(arg tracker_param_file)" />
         <arg name="bag_start_time" value="$(arg bag_start_time)" />
     </include>
-    <include file="$(find line_event_tracker_visualizer)/launch/run.launch" />
+    <include file="$(find line_event_tracker_visualizer)/launch/run.launch">
+        <arg name="camera_param_file" value="$(arg camera_param_file)" />
+        <arg name="tracker_param_file" value="$(arg tracker_param_file)" />
+    </include>
     <node name="rosbag_play" pkg="rosbag" type="play" args="-r $(arg play_speed) $(arg bag_file)" output="screen" required="true" />
 </launch>

@@ -21,6 +21,7 @@ Visualizer::Visualizer(ros::NodeHandle & nh) : nh_(nh)
   nh_.param<bool>("/line_visualizer/undistort", undistort_, false);
   nh_.param<bool>("/line_visualizer/use_dvs_image", use_dvs_image_, false);
   nh_.param<bool>("/line_visualizer/draw_on_dvs_image", draw_on_dvs_image_, false);
+  nh_.param<int>("/line_visualizer/general/drawing_line_width", drawing_line_width_, 3);
 
   readCameraInfo();
 
@@ -150,7 +151,7 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
             text_color = cv::Scalar(51, 153, 255); // orange
             break;
           case line_event_tracker_msgs::Line::ACTIVE:
-            line_color = cv::Scalar(0, 190, 110); // green
+            line_color = cv::Scalar(85, 255, 0);//cv::Scalar(0, 190, 110); // green
             text_color = cv::Scalar(0, 190, 110); // green
             break;
         }
@@ -181,7 +182,7 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
       cv::putText(image_undistort_, std::to_string(line.id), mid_point, cv::FONT_HERSHEY_DUPLEX, 0.45, text_color, 0.5,
                   cv::LINE_AA);
 
-      if (show_distorted_line_) {
+      if (show_distorted_line_ && line.state == line_event_tracker_msgs::Line::ACTIVE) {
         // Create distorted line segments
         cv::Point2d segmented_endpoint;
         std::vector<cv::Point> distorted_endpoints;
@@ -202,7 +203,7 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
             cv::Vec2i ls = distorted_endpoints[i+1] - distorted_endpoints[i];
             bool smallNorm = (cv::norm(ls) < 100);
             if (isInImage_0 && isInImage_1 && smallNorm) {
-              cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, 1, cv::LINE_8, 0);
+              cv::line(image_, distorted_endpoints[i], distorted_endpoints[i+1], line_color, drawing_line_width_, cv::LINE_8, 0);
             }
           }
         }

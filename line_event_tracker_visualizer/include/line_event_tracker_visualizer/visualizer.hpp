@@ -78,6 +78,7 @@ private:
   bool draw_on_dvs_image_;
   std::string images_dir_;
   int image_counter_;
+  int drawing_line_width_;
 
 };
 
