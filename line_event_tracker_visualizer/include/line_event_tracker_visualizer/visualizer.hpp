@@ -79,6 +79,7 @@ private:
   std::string images_dir_;
   int image_counter_;
   int drawing_line_width_;
+  bool vis_events_;
 
 };
 

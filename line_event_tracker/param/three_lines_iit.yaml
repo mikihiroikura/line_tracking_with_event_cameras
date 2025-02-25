@@ -6,7 +6,8 @@ general:
   periodical_check_frequency: 50   # []
   write_for_visualization: true    # [] store events belonging to lines and clusters for visualization purposes
   record_processing_time: true     # [] flag to record processing time
-  drawing_line_width: 3             # Line width for drawing [px]
+  drawing_line_width: 2             # Line width for drawing [px]
+  vis_events: false
 
 hw_test:
   mask_height: 480                  # [px]

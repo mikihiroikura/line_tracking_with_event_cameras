@@ -7,6 +7,7 @@ general:
   write_for_visualization: true    # [] store events belonging to lines and clusters for visualization purposes
   record_processing_time: false     # [] flag to record processing time
   drawing_line_width: 2             # Line width for drawing [px]
+  vis_events: false
 
 filters:
   rf_period_same_pol: 8             # [ms] refactory period for events of same polarity

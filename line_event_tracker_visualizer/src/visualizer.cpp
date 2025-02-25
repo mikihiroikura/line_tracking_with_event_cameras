@@ -22,6 +22,7 @@ Visualizer::Visualizer(ros::NodeHandle & nh) : nh_(nh)
   nh_.param<bool>("/line_visualizer/use_dvs_image", use_dvs_image_, false);
   nh_.param<bool>("/line_visualizer/draw_on_dvs_image", draw_on_dvs_image_, false);
   nh_.param<int>("/line_visualizer/general/drawing_line_width", drawing_line_width_, 3);
+  nh_.param<bool>("/line_visualizer/general/vis_events", vis_events_, true);
 
   readCameraInfo();
 
@@ -61,22 +62,27 @@ void Visualizer::imageCallback(const sensor_msgs::Image::ConstPtr& msg)
   }
 
   // convert to BGR image
-  if (msg->encoding == "rgb8")
-  {
-    cv::cvtColor(cv_ptr->image, image_, CV_RGB2BGR);
+  if (vis_events_) {
+    if (msg->encoding == "rgb8")
+    {
+      cv::cvtColor(cv_ptr->image, image_, CV_RGB2BGR);
+    }
+    else if (msg->encoding == "mono8")
+    {
+      cv::cvtColor(cv_ptr->image, image_, CV_GRAY2BGR);
+    }
+    else if (msg->encoding == "bgr8")
+    {
+      cv_ptr->image.copyTo(image_);
+    }
+    else
+    {
+      ROS_ERROR("msg encoding error...");
+      return;
+    }
   }
-  else if (msg->encoding == "mono8")
-  {
-    cv::cvtColor(cv_ptr->image, image_, CV_GRAY2BGR);
-  }
-  else if (msg->encoding == "bgr8")
-  {
-    cv_ptr->image.copyTo(image_);
-  }
-  else
-  {
-    ROS_ERROR("msg encoding error...");
-    return;
+  else {
+    image_ = cv::Mat(cv_ptr->image.rows, cv_ptr->image.cols, CV_8UC3, cv::Scalar(0, 0, 0));
   }
 
   // undistort
