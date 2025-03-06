@@ -1,5 +1,5 @@
 # Line Tracking with Event Cameras
-This is a forked repository from [Power Line Tracking with Event Cameras](https://github.com/uzh-rpg/line_tracking_with_event_cameras).<br>
+This is a copied repository from [Power Line Tracking with Event Cameras](https://github.com/uzh-rpg/line_tracking_with_event_cameras).<br>
 This repository is used for evaluation of event-based line segment detection and tracking.
 
 ## Installation
