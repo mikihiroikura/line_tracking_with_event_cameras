@@ -16,5 +16,3 @@ for i in $(seq $START_TRIAL $END_TRIAL); do
     docker cp plt:/home/plt/lines.txt "$OUTPUT_UNDISTORT_DIR/$i.txt"
 
 done
-
-
