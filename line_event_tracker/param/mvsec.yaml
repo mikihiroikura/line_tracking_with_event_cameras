@@ -1,10 +1,10 @@
 general:
-  height: 180                       # [px]
-  width: 240                        # [px]
-  undistort: true                   # [] undistort incoming events based on camera parameters
-  line_publish_rate: 40             # [hz]
-  periodical_check_frequency: 50    # [hz]
-  write_for_visualization: true    # [] store events belonging to lines and clusters for visualization purposes
+  height: 260                       # [px]
+  width: 346                        # [px]
+  undistort: true
+  line_publish_rate: 40
+  periodical_check_frequency: 60    # [hz]
+  write_for_visualization: true
   record_processing_time: true     # [] flag to record processing time
   drawing_line_width: 2             # Line width for drawing [px]
   vis_events: false
@@ -87,4 +87,3 @@ chains:
 
   # deletion
   deletion_max_event_age: 20            # [ms]
-
