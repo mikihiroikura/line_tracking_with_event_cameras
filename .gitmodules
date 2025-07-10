@@ -1,0 +1,6 @@
+[submodule "rpg_dvs_ros"]
+	path = rpg_dvs_ros
+	url = https://github.com/uzh-rpg/rpg_dvs_ros.git
+[submodule "catkin_simple"]
+	path = catkin_simple
+	url = https://github.com/catkin/catkin_simple.git

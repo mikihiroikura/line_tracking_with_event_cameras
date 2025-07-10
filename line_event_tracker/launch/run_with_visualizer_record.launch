@@ -3,6 +3,10 @@
     <arg name="bag_file" default="/app/rosbag/Log2bag/three_lines.bag" />
     <arg name="bag_start_time" default="1733421681.99" />
     <arg name="play_speed" default="0.5" />
+    <arg name="event_topic" default="/dvs/events" />
+    <arg name="image_topic" default="/dvs/image_raw" />
+    <arg name="start_time" default="0" />
+    <arg name="duration" default="10" />
     <!-- Recorded topic -->
     <arg name="topics" default="/line_events_tracker_lines" />
     <arg name="camera_param_file" default="$(find line_event_tracker)/param/EVK3.yaml" />
@@ -12,10 +16,13 @@
         <arg name="camera_param_file" value="$(arg camera_param_file)" />
         <arg name="tracker_param_file" value="$(arg tracker_param_file)" />
         <arg name="bag_start_time" value="$(arg bag_start_time)" />
+        <arg name="event_topic" value="$(arg event_topic)" />
     </include>
     <include file="$(find line_event_tracker_visualizer)/launch/run.launch">
         <arg name="camera_param_file" value="$(arg camera_param_file)" />
         <arg name="tracker_param_file" value="$(arg tracker_param_file)" />
+        <arg name="event_topic" value="$(arg event_topic)" />
+        <arg name="image_topic" value="$(arg image_topic)" />
     </include>
-    <node name="rosbag_play" pkg="rosbag" type="play" args="-r $(arg play_speed) $(arg bag_file)" output="screen" required="true" />
+    <node name="rosbag_play" pkg="rosbag" type="play" args="-r $(arg play_speed) $(arg bag_file) --start=$(arg start_time) --duration=$(arg duration)" output="screen" required="true" />
 </launch>

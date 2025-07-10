@@ -32,9 +32,6 @@ RUN mkdir -p ${CODE_DIR}/catkin_ws/src && \
 RUN apt-get update && apt-get install -y python3-catkin-tools
 
 ### Install Power line tracker with event camera
-RUN cd ${CODE_DIR}/catkin_ws/src && \
-    git clone https://github.com/uzh-rpg/rpg_dvs_ros.git && \
-    git clone https://github.com/catkin/catkin_simple.git
 COPY . ${CODE_DIR}/catkin_ws/src
 
 ### Change owner

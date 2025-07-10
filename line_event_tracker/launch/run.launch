@@ -2,6 +2,7 @@
     <arg name="camera_param_file" default="$(find line_event_tracker)/param/EVK3.yaml" />
     <arg name="tracker_param_file" default="$(find line_event_tracker)/param/param_EVK3.yaml" />
     <arg name="bag_start_time" default="1733421681.99" />
+    <arg name="event_topic" default="/dvs/events" />
     <node name="line_event_tracker" pkg="line_event_tracker" type="line_event_tracker_node" output="screen">
         <!-- Tracker parameters -->
         <rosparam file="$(arg tracker_param_file)" />
@@ -11,7 +12,7 @@
 
         <param name="bag_start_time" value="$(arg bag_start_time)" />
 
-        <remap from="events" to="/dvs/events" />
+        <remap from="events" to="$(arg event_topic)" />
         <remap from="lines" to="/line_events_tracker_lines" />
     </node>
 </launch>

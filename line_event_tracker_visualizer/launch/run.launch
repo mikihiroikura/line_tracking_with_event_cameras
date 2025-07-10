@@ -1,6 +1,8 @@
 <launch>
   <arg name="camera_param_file" default="$(find line_event_tracker)/param/EVK3.yaml" />
   <arg name="tracker_param_file" default="$(find line_event_tracker)/param/param_EVK3.yaml" />
+  <arg name="event_topic" default="/dvs/events" />
+  <arg name="image_topic" default="/dvs/image_raw" />
   <!-- visualization -->
   <node name="line_visualizer" pkg="line_event_tracker_visualizer" type="line_event_tracker_visualizer_node" output="screen">
 
@@ -23,7 +25,7 @@
 
     <remap from="lines" to="/line_events_tracker_lines" />
     <remap from="vel_cmd" to="/parrot/agiros_pilot/velocity_command" />
-    <remap from="image" to="/dvs/image_raw" />
+    <remap from="image" to="$(arg image_topic)" />
     <remap from="dvs_image" to="dvs_rendering" />
     <remap from="line_visualization" to="line_visualization" />
     <remap from="line_visualization_distort" to="line_visualization_distort" />
@@ -32,7 +34,7 @@
   <!-- dvs_renderer -->
   <node name="dvs_renderer" pkg="dvs_renderer" type="dvs_renderer" output="screen">
     <param name="display_method" value="red-blue"/>
-    <remap from="events" to="/dvs/events" />
+    <remap from="events" to="$(arg event_topic)" />
     <remap from="dvs_rendering" to="dvs_rendering" />
   </node>
 
