@@ -3,6 +3,7 @@
   <arg name="tracker_param_file" default="$(find line_event_tracker)/param/param_EVK3.yaml" />
   <arg name="event_topic" default="/dvs/events" />
   <arg name="image_topic" default="/dvs/image_raw" />
+  <arg name="show_display" default="true" />
   <!-- visualization -->
   <node name="line_visualizer" pkg="line_event_tracker_visualizer" type="line_event_tracker_visualizer_node" output="screen">
 
@@ -39,10 +40,10 @@
   </node>
 
   <!-- display -->
-  <node name="image_view_left" pkg="rqt_image_view" type="rqt_image_view">
+  <node name="image_view_left" pkg="rqt_image_view" type="rqt_image_view" if="$(arg show_display)">
   	<remap from="image" to="line_visualization"/>
   </node>
-  <node name="image_view_right" pkg="rqt_image_view" type="rqt_image_view">
+  <node name="image_view_right" pkg="rqt_image_view" type="rqt_image_view" if="$(arg show_display)">
     <remap from="image" to="line_visualization_distort"/>
   </node>
 
