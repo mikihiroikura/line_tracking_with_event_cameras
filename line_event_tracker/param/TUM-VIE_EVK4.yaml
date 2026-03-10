@@ -6,7 +6,7 @@ cam0:
   - -0.06222183183004903
   - 0.21682612342850954
   - -0.23528623774744806
-  distortion_model: radtan
+  distortion_model: equidistant
   intrinsics:
   - 1049.5830934616608
   - 1049.4229746040553
