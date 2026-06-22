@@ -13,5 +13,5 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./:/home/plt/catkin_ws/src
-      - /home/mikura-iit.local/data/rosbag/:/app/rosbag # Mount rosbag files into docker container
+      - ${DATA_DIR}:/data # Mount rosbag files into docker container
     command: sleep infinity
