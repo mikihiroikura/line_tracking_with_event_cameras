@@ -13,7 +13,7 @@ SHOW_DISPLAY=${10:-true}
 CAMERA_PARAM_FILE=${11:-/home/plt/catkin_ws/src/line_event_tracker/param/EVK3.yaml}
 TRACKER_PARAM_FILE=${12:-/home/plt/catkin_ws/src/line_event_tracker/param/param_EVK3.yaml}
 DURATION=${13:-10}  # in seconds
-ROS_PORT=${14:11311}
+ROS_PORT=${14:-11311}
 
 for i in $(seq $START_TRIAL $END_TRIAL); do
     docker exec plt /bin/bash -c "cd ~/catkin_ws && source devel/setup.bash && \
